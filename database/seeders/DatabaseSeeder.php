@@ -3,7 +3,13 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+use App\Models\Client;
+use App\Models\Segment;
+use App\Models\Task;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Carbon\CarbonImmutable;
 
 class DatabaseSeeder extends Seeder
 {
@@ -12,11 +18,88 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
+        DB::table('tasks')->delete();
+        DB::table('segments')->delete();
+        DB::table('clients')->delete();
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        $devSegment = Segment::create(['name' => 'Dev segment']);
+        $mainSegment = Segment::create(['name' => 'Main segment']);
+
+        $mainClients = [
+            [
+                "phone" => "79000010000",
+                "name" => "Иван Иванов",
+                "birthday" => CarbonImmutable::now()->addDays(7)->subDays(2)->subYears(25)->toDateString(),
+            ],
+            [
+                "phone" => "79000010010",
+                "name" => "Алексей Петров",
+                "birthday" => CarbonImmutable::now()->addDays(7)->subDays(1)->subYears(25)->toDateString(),
+            ],
+            [
+                "phone" => "79000010020",
+                "name" => "Констанин Жаров",
+                "birthday" => CarbonImmutable::now()->addDays(7)->subDays(0)->subYears(25)->toDateString(),
+            ],
+            [
+                "phone" => "79000010030",
+                "name" => "Максим Леонов",
+                "birthday" => CarbonImmutable::now()->addDays(7)->addDays(1)->subYears(25)->toDateString(),
+            ],
+            [
+                "phone" => "79005250538",
+                "name" => "Денис Турушев",
+                "birthday" => CarbonImmutable::now()->addDays(7)->addDays(2)->subYears(25)->toDateString(),
+            ]
+        ];
+
+        $devClients = [
+            [
+                "phone" => "79261089800",
+                "name" => "Дмитрий Орлов",
+                "birthday" => CarbonImmutable::now()->addDays(7)->subDays(0)->subYears(25)->toDateString(),
+            ],
+            [
+                "phone" => "79265217847",
+                "name" => "Елена",
+                "birthday" => CarbonImmutable::now()->addDays(7)->subDays(1)->subYears(25)->toDateString(),
+            ],
+        ];
+
+        Client::factory()->createMany($devClients)->each(fn ($it) => $it->segments()->attach($devSegment->id));
+        Client::factory()->createMany($mainClients)->each(fn ($it) => $it->segments()->attach($mainSegment->id));
+
+        $tasks = [
+            [
+                'time' => 0,
+                'active' => true,
+                'type' => 'once',
+                'text' => 'Once',
+                'segment_id' => $devSegment->id,
+            ],
+            [
+                'time' => CarbonImmutable::now()->addHour()->timestamp,
+                'active' => true,
+                'type' => 'once',
+                'text' => 'Once',
+                'segment_id' => $devSegment->id,
+            ],
+            [
+                'time' => 24 * 7,
+                'active' => true,
+                'type' => 'birthday',
+                'text' => 'Birthday',
+                'segment_id' => $devSegment->id,
+            ],
+            [
+                'time' => 10,
+                'active' => true,
+                'type' => 'daily',
+                'text' => 'Daily',
+                'segment_id' => $devSegment->id,
+            ],
+        ];
+
+        Task::factory()->createMany($tasks);
     }
 }
