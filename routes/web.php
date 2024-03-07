@@ -1,5 +1,6 @@
 <?php
 
+use App\Services\TaskRunnerService;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
+Route::get('/', function (TaskRunnerService $service) {
+    $service->run();
     return view('welcome');
 });

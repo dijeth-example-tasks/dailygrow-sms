@@ -11,6 +11,10 @@ class Client extends Model
 
     protected $fillable = ['name', 'birthday', 'phone'];
 
+    protected $casts = [
+        'birthday' => 'immutable_datetime:Y-m-d'
+    ];
+
     public function segments()
     {
         return $this->belongsToMany(Segment::class, 'segments_clients_pivot')->orderBy('created_at', 'desc');;
