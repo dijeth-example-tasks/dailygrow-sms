@@ -40,9 +40,9 @@ class TaskRunnerService
         return abs($controlDate->startOfMonth() - $hourShift) <= 1;
     }
 
-    public function checkBirthday(CarbonImmutable $controlDate, CarbonImmutable $birthday): bool
+    public function checkBirthday(CarbonImmutable $controlDate, CarbonImmutable $birthday, int $hourShift): bool
     {
-        return $controlDate->month === $birthday->month && $controlDate->day === $birthday->day;
+        return abs($birthday->shiftTimezone($controlDate->getTimezone())->setYear($controlDate->year)->subHours($hourShift)->diffInHours($controlDate)) <= 1;
     }
 
     public function checkTask(Task $task, CarbonImmutable $controlDate = null): bool
@@ -69,7 +69,7 @@ class TaskRunnerService
         $clients = $task->segment->clients;
 
         if ($task->type === 'birthday') {
-            $clients = $clients->filter(fn ($it) => $this->checkBirthday(nowTZ(), $it->birthday));
+            $clients = $clients->filter(fn ($it) => $this->checkBirthday(nowTZ(), $it->birthday, $task->time));
         }
 
         return $clients->map(fn ($it) => new Message(['client_id' => $it->id, 'task_id' => $task->id, 'status' => 'sent']));
