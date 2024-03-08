@@ -15,3 +15,13 @@ if (!function_exists('nowTZ')) {
         return now()->setTimezone(env('APP_TIMEZONE', config('app.timezone')))->toImmutable();
     }
 }
+
+if (!function_exists('getApiResponse')) {
+    function getApiResponse(array $body): array
+    {
+        return [
+            'success' => true,
+            'data' => $body,
+        ];
+    }
+}

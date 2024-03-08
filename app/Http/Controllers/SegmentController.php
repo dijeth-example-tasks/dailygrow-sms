@@ -12,7 +12,7 @@ class SegmentController extends Controller
      */
     public function index()
     {
-        //
+        return response()->json(Segment::with('clients')->get()->toArray());
     }
 
     /**
