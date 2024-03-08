@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Message;
 use App\Models\Task;
+use App\Models\TaskRun;
 use App\Services\Sms\SmsSender;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
@@ -44,17 +45,18 @@ class TaskRunnerService
         return $controlDate->month === $birthday->month && $controlDate->day === $birthday->day;
     }
 
-    public function checkTask(Task $task): bool
+    public function checkTask(Task $task, CarbonImmutable $controlDate = null): bool
     {
+        $controlDate = $controlDate ?: nowTZ();
         switch ($task->type) {
             case 'once':
-                return $this->checkOnce(nowTZ(), $task->time ? nowImmutable()->setTimestamp($task->time) : null);
+                return $this->checkOnce($controlDate, $task->time ? nowImmutable()->setTimestamp($task->time) : null);
             case  'daily':
-                return $this->checkDaily(nowTZ(), $task->time);
+                return $this->checkDaily($controlDate, $task->time);
             case  'weekly':
-                return $this->checkWeekly(nowTZ(), $task->time);
+                return $this->checkWeekly($controlDate, $task->time);
             case  'monthly':
-                return $this->checkMonthly(nowTZ(), $task->time);
+                return $this->checkMonthly($controlDate, $task->time);
             case  'birthday':
                 return true;
             default:
@@ -75,9 +77,11 @@ class TaskRunnerService
 
     public function run()
     {
-        Task::with('segment.clients')->whereActive(true)->get()->each(function (Task $task) {
+        $taskDate = nowTZ();
+
+        Task::with('segment.clients')->whereActive(true)->get()->each(function (Task $task) use ($taskDate) {
             info('TaskRunner: ' . $task->type);
-            if (!$this->checkTask($task)) {
+            if (!$this->checkTask($task, $taskDate)) {
                 info('Task must not run');
                 return;
             }
@@ -89,12 +93,22 @@ class TaskRunnerService
             }
 
             $phones = $task->segment->clients->pluck('phone');
-            $lastId = Message::max('id');
-            // Message::insert($messages->toArray());
             $errors = $this->smsService->send($phones, $task->text);
             info('Errors: ' . $errors->count());
-            // Message::where('id', '>', $lastId)->whereNotIn('phone', $errors)->update(['status' => 'received']);
-            // Message::where('id', '>', $lastId)->whereIn('phone', $errors)->update(['status' => 'error']);
+
+            $taskRun = new TaskRun([
+                'messages_count' => $task->segment->clients->count(),
+                'errors_count' => $errors->count(),
+                'date' => $taskDate,
+                'task_id' => $task->id,
+            ]);
+
+            $taskRun->save();
+
+            if ($task->type === 'once') {
+                $task->active = false;
+                $task->save();
+            }
         });
     }
 }

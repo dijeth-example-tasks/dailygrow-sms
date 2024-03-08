@@ -17,6 +17,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        DB::table('task_runs')->delete();
+        DB::table('messages')->delete();
         DB::table('tasks')->delete();
         DB::table('segments')->delete();
         DB::table('clients')->delete();

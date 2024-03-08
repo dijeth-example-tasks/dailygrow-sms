@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('task_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->integer('messages_count', false, true)->nullable(false);
             $table->integer('errors_count', false, true)->nullable(false);
-            $table->date('date')->nullable(false);
+            $table->timestamp('date')->nullable(false);
         });
     }
 

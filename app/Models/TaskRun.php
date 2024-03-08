@@ -12,7 +12,7 @@ class TaskRun extends Model
 
     protected $fillable = ['task_id', 'messages_count', 'errors_count', 'date'];
     protected $casts = [
-        'date' => 'immutable_datetime:Y-m-d',
+        'date' => 'immutable_datetime:Y-m-d H:i:s',
     ];
 
     public function task(): BelongsTo

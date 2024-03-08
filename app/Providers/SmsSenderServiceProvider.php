@@ -14,7 +14,6 @@ class SmsSenderServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        info(env('MOCK_SMS_SERVICE'));
         $smsService = env('MOCK_SMS_SERVICE') ? MockSmsSender::class : SmscRuSender::class;
         $this->app->bind(SmsSender::class, $smsService);
     }
