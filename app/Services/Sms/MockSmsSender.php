@@ -6,20 +6,40 @@ use Illuminate\Support\Collection;
 
 class MockSmsSender implements SmsSender
 {
-    public function send(Collection $phones, string $text): Collection
+    protected function request(array $body): object
     {
-        $errorPhones = $phones->shuffle()->take(rand(1, 5));
+        $body['login'] = config('services.sms.login');
+        $body['psw'] = config('services.sms.password');
+        $body['tz'] = 0;
+        $body['op'] = 1;
+        $body['fmt'] = 3;
 
-        $data = [
-            'login' => env('SMS_LOGIN'),
-            'psw' => env('SMS_PASSWORD'),
+        logger()->info(self::class, $body);
+
+        $response = (object)[];
+        $response->id = $body['id'];
+        $response->cnt = rand(1, count(explode(',', $body['phones'])));
+
+        return $response;
+    }
+
+    public function send(string $id, int $startHour, int $endHour, Collection $phones, string $text): SmsServiceResponse
+    {
+        $response = $this->request([
+            'id' => $id,
+            'time' => $startHour . '-' . $endHour,
             'phones' => $phones->join(','),
-            'mes' => $text,
-            'err' => 1,
-        ];
+            'mes' => $text
+        ]);
 
-        info(env('SMS_URL'), $data);
+        if (property_exists($response, 'error')) {
+            logger()->error(self::class, (array) $response);
+            return new SmsServiceResponse($id, $phones->count(), $phones->count());
+        }
 
-        return $errorPhones;
+        $smsServiceResponse = new SmsServiceResponse($id, $phones->count(), $phones->count() - $response->cnt);
+        logger()->info(self::class, (array) $smsServiceResponse);
+
+        return $smsServiceResponse;
     }
 }

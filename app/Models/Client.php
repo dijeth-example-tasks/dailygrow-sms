@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,5 +19,10 @@ class Client extends Model
     public function segments()
     {
         return $this->belongsToMany(Segment::class, 'segments_clients_pivot')->orderBy('created_at', 'desc');;
+    }
+
+    public function isBirthday(CarbonImmutable $controlDate): bool
+    {
+        return $this->birthday->day === $controlDate->day && $this->birthday->month === $controlDate->month;
     }
 }

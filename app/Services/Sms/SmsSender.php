@@ -6,5 +6,5 @@ use Illuminate\Support\Collection;
 
 interface SmsSender
 {
-    public function send(Collection $phones, string $text): Collection;
+    public function send(string $id, int $startHour, int $endHour, Collection $phones, string $text): SmsServiceResponse;
 }
