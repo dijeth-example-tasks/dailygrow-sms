@@ -6,6 +6,9 @@ use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property CarbonImmutable birthday
+ */
 class Client extends Model
 {
     use HasFactory;
@@ -21,8 +24,9 @@ class Client extends Model
         return $this->belongsToMany(Segment::class, 'segments_clients_pivot')->orderBy('created_at', 'desc');;
     }
 
-    public function isBirthday(CarbonImmutable $controlDate): bool
+    public function isBirthday(CarbonImmutable $controlDate, int $timeShift): bool
     {
-        return $this->birthday->day === $controlDate->day && $this->birthday->month === $controlDate->month;
+        $date = $this->birthday->startOfDay()->shiftTimezone($controlDate->timezone)->subHours($timeShift);
+        return $date->day === $controlDate->day && $date->month === $controlDate->month;
     }
 }

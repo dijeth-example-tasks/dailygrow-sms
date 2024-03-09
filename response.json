@@ -1,7 +1,43 @@
-{
-    "id": 12345,
-    "cnt": 1,
-    "errors": {
-        "7926108980": 22
+[
+    {
+        "id": 12345,
+        "cnt": -4,
+        "phones": [
+            {
+                "phone": "792610890",
+                "mccmnc": "25002",
+                "status": "22",
+                "error": "249"
+            },
+            {
+                "phone": "7926108980",
+                "mccmnc": "25002",
+                "status": "22",
+                "error": "249"
+            }
+        ]
+    },
+
+    {
+        "id": 12345,
+        "cnt": 1,
+        "phones": [
+            {
+                "phone": "79261089800",
+                "mccmnc": "25099",
+                "cost": "4.9"
+            },
+            {
+                "phone": "7926108980",
+                "mccmnc": "25002",
+                "status": "22",
+                "error": "249"
+            }
+        ]
+    },
+
+    {
+        "error": "authorise error",
+        "error_code": 2
     }
-}
+]

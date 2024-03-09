@@ -83,7 +83,7 @@ class Task extends Model
                 return $controlDate->startOfMonth()->addDays(intdiv($this->time, 24))->diffInDays($controlDate) === 0;
             case  'birthday':
                 return $this->segment->clients
-                    ->first(fn (Client $client) => $client->isBirthday($controlDate->addHours($this->time))) !== null;
+                    ->first(fn (Client $client) => $client->isBirthday($controlDate, $this->time)) !== null;
             default:
                 return false;
         }
@@ -96,7 +96,7 @@ class Task extends Model
         }
 
         return $this->type === 'birthday'
-            ? $this->segment->clients->filter(fn (Client $client) => $client->isBirthday($controlDate->addHours($this->time)))
+            ? $this->segment->clients->filter(fn (Client $client) => $client->isBirthday($controlDate, $this->time))
             : $this->segment->clients;
     }
 }
