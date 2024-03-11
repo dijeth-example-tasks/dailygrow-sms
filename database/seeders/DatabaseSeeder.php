@@ -7,8 +7,10 @@ namespace Database\Seeders;
 use App\Models\Client;
 use App\Models\Segment;
 use App\Models\Task;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -17,11 +19,17 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        DB::table('users')->delete();
         DB::table('task_runs')->delete();
-        DB::table('messages')->delete();
         DB::table('tasks')->delete();
         DB::table('segments')->delete();
         DB::table('clients')->delete();
+
+        User::create([
+            'name' => 'Demo User',
+            'email' => 'demo-user@email.com',
+            'password' => Hash::make('demo-user'),
+        ]);
 
         $devSegment = Segment::create(['name' => 'Dev segment']);
         $mainSegment = Segment::create(['name' => 'Main segment']);
@@ -77,6 +85,8 @@ class DatabaseSeeder extends Seeder
                 'type' => 'once',
                 'text' => 'Once',
                 'segment_id' => $devSegment->id,
+                'name' => 'Разовая ближайшая рассылка',
+                'description' => 'Пример разовой рассылки в ближайший момент'
             ],
             [
                 'time' => nowTZ()->addHour()->timestamp,
@@ -84,6 +94,8 @@ class DatabaseSeeder extends Seeder
                 'type' => 'once',
                 'text' => 'Once',
                 'segment_id' => $devSegment->id,
+                'name' => 'Разовая рассылка',
+                'description' => 'Пример разовой рассылки в определенный день и время'
             ],
             [
                 'time' => 24 * 7 - nowTZ()->hour - 1,
@@ -91,6 +103,8 @@ class DatabaseSeeder extends Seeder
                 'type' => 'birthday',
                 'text' => 'Birthday',
                 'segment_id' => $devSegment->id,
+                'name' => 'Рассылка перед днем рождения',
+                'description' => 'Пример рассылки за 7 дней перед днем рождения'
             ],
             [
                 'time' => nowTZ()->hour + 1,
@@ -98,6 +112,8 @@ class DatabaseSeeder extends Seeder
                 'type' => 'daily',
                 'text' => 'Daily',
                 'segment_id' => $devSegment->id,
+                'name' => 'Ежедневная рассылка',
+                'description' => 'Пример ежедневной рассылки в определенное время'
             ],
         ];
 

@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function (TaskRunnerService $service) {
-    $service->run();
-    return view('welcome');
-});
+// Route::get('/', function (TaskRunnerService $service) {
+//     $service->run();
+//     return view('welcome');
+// });

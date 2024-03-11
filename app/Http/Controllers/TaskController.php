@@ -28,6 +28,7 @@ class TaskController extends Controller
         $task->active = $response->get('active');
         $task->text = $response->get('text');
         $task->name = $response->get('name');
+        $task->segment_id = $response->get('segment_id');
         $task->description = $response->get('description');
 
         $task->save();
