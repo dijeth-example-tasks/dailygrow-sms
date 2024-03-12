@@ -12,7 +12,7 @@ class TaskRunController extends Controller
      */
     public function index()
     {
-        return response()->json(TaskRun::with('task.segment')->get()->toArray());
+        return response()->json(TaskRun::with('task.segment')->orderBy('date', 'desc')->get()->toArray());
     }
 
     /**
