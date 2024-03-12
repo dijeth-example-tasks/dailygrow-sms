@@ -8,7 +8,7 @@
 
 1. Склонировать проект
     ```
-    git@github.com:dijeth-example-tasks/dailygrow-sms.git
+    git clone git@github.com:dijeth-example-tasks/dailygrow-sms.git
     ```
 1. Поднять БД
     ```
