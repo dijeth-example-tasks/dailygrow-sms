@@ -30,7 +30,7 @@ class TaskRequest extends FormRequest
             'active' => 'required|boolean',
             'text' => 'required|string',
             'name' => 'string|max:100',
-            'description' => 'string',
+            'description' => 'string|nullable',
             'segment_id' => 'required|exists:segments,id',
         ];
     }
@@ -41,6 +41,6 @@ class TaskRequest extends FormRequest
             'success'   => false,
             'message'   => 'Validation errors',
             'data'      => $validator->errors()
-        ]));
+        ], 422));
     }
 }
