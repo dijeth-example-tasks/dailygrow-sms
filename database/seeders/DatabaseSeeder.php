@@ -31,8 +31,8 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('demo-user'),
         ]);
 
-        $devSegment = Segment::create(['name' => 'Dev segment']);
-        $mainSegment = Segment::create(['name' => 'Main segment']);
+        $mainSegment = Segment::create(['name' => 'Основные клиенты']);
+        $devSegment = Segment::create(['name' => 'Клиенты для тестирования']);
 
         $mainClients = [
             [

@@ -12,7 +12,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->command('app:send-sms')->timezone(env('APP_TIMEZONE', config('app.timezone')))->dailyAt('00:00');
+        $schedule->command('app:send-sms')->timezone(config('app.timezone'))->dailyAt('00:00');
     }
 
     /**

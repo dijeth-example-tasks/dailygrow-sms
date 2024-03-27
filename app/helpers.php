@@ -12,7 +12,7 @@ if (!function_exists('nowImmutable')) {
 if (!function_exists('nowTZ')) {
     function nowTZ(): CarbonImmutable
     {
-        return now()->setTimezone(env('APP_TIMEZONE', config('app.timezone')))->toImmutable();
+        return now()->setTimezone(config('app.timezone'))->toImmutable();
     }
 }
 
